@@ -1,9 +1,5 @@
 /**
- * TODO.:
- * (1) 14AB
- * (2) Does not handle $$ yet
- * (3) Handle multiline IO
- * (4) Appropriate exceptions
+ * Link to symbol table
  * @author pravar
  */
 public class Main {

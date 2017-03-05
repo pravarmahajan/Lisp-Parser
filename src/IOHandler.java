@@ -23,13 +23,21 @@ public class IOHandler {
             System.out.println("> " + sExpression.getDottedNotation());
     }
     
+    /**
+     * Read expression from the console.
+     * The expression can span multiple lines, however it should always end
+     * with a new line consisting of '$' character.
+     * If a new line with '$$' is encountered, it singals exit flag which
+     * is captured by the main function and the program quits.
+     * @return concatenated expression.
+     */
     public String inputExpression() {
         StringBuilder inputString = new StringBuilder();
         Scanner inputReader = new Scanner(System.in);
         String line = "";
         while(!line.equals("$")){
             line = inputReader.nextLine();
-            inputString.append(line);
+            inputString.append(line).append('\n');
             if(line.equals("$$")) {
                 exitSignal = true;
                 break;

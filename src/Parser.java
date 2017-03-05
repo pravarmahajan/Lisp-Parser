@@ -11,6 +11,11 @@
 
 import java.util.regex.*;
 
+/**
+ * This is the parser class converts the input s-expression and generates
+ * the corresponding to s-expression.
+ * The rules of grammar for parsing the s-expression are as defined above.
+ */
 public class Parser {
     public SExp getParsedSExpressions(String inputStream) throws ParseError {
         TokenAnalyser tokenAnalyser = new TokenAnalyser(inputStream);
@@ -60,7 +65,7 @@ public class Parser {
         }
     }
 
-    private SExp parseIntAtom(TokenAnalyser tokenAnalyser) {
+    private SExp parseIntAtom(TokenAnalyser tokenAnalyser) throws ParseError {
         return tokenAnalyser.getInteger();
     }
 
@@ -83,6 +88,13 @@ public class Parser {
     }
 }
 
+/**
+ * This class has been provided to do exception handling and generating
+ * appropriate error message.
+ * Based on the current token under consideration, the type of error is
+ * determined.
+ * @author pravar
+ */
 class ParseError extends Exception {
     StringBuilder errorMessage;
     public ParseError(TokenAnalyser tokenAnalyser) {
@@ -90,10 +102,11 @@ class ParseError extends Exception {
         if(tokenAnalyser.isDot())
             errorMessage.append("**Unexpected Dot");
         else if(tokenAnalyser.isErrorStream()
-                || tokenAnalyser.isIntegerAtom()
                 || tokenAnalyser.isSymbolicAtom())
             errorMessage.append("**Unexpected Character: ").append(
                     tokenAnalyser.getTokenError());
+        else if(tokenAnalyser.isIntegerAtom())
+            errorMessage.append("**Ill formed integer atom: ");
         else if(tokenAnalyser.isLeftParanthesis())
             errorMessage.append("**Unexpected '('");
         else if(tokenAnalyser.isRightParanthesis())
@@ -133,7 +146,7 @@ class TokenAnalyser {
         inputBuffer = input;
         pointer = 0;
         symbolPattern = Pattern.compile("[A-Za-z]\\w*");
-        intPattern = Pattern.compile("[-+]?\\d+");
+        intPattern = Pattern.compile("([-+]?\\d+)([\\s\\.\\)])");
         symbolMatcher = symbolPattern.matcher(inputBuffer);
         intMatcher = intPattern.matcher(inputBuffer);
     }
@@ -239,18 +252,16 @@ class TokenAnalyser {
         return new SExp(identifier);
     }
     
-    public SExp getInteger() { //TODO: Add custom exception class
+    public SExp getInteger() throws ParseError { 
         intMatcher.find(pointer);
         int number;
         try {
-            number = Integer.parseInt(intMatcher.group());
-            pointer = intMatcher.end();
+            number = Integer.parseInt(intMatcher.group(1));
+            pointer += intMatcher.group(1).length();
             return new SExp(number);
         }
         catch(IllegalStateException exception) {
-            System.out.println("Ill defined integer exception.. Aborting");
+            throw new ParseError(this);
         }
-        return new SExp("NIL");
-
     }
 }
