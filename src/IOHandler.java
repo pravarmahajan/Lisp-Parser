@@ -42,7 +42,12 @@ public class IOHandler {
                 exitSignal = true;
                 break;
             }
+            else if(inputString.toString().equals("$\n")) {
+                //Empty expression
+                inputString = new StringBuilder();
+                line = "";
+            }
         } 
-        return inputString.toString();
+        return inputString.toString().trim();
     }
 }

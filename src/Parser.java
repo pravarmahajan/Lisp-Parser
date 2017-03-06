@@ -19,7 +19,11 @@ import java.util.regex.*;
 public class Parser {
     public SExp getParsedSExpressions(String inputStream) throws ParseError {
         TokenAnalyser tokenAnalyser = new TokenAnalyser(inputStream);
-        return parseNextSExpression(tokenAnalyser);
+        SExp terminalExpression = parseNextSExpression(tokenAnalyser);
+        tokenAnalyser.skipWhitespaces();
+        if(!tokenAnalyser.isEndOfExpression())
+            throw new ParseError(tokenAnalyser);
+        return terminalExpression;
     }
     
     private SExp parseNextSExpression(TokenAnalyser tokenAnalyser) 
@@ -111,14 +115,21 @@ class ParseError extends Exception {
             errorMessage.append("**Unexpected '('");
         else if(tokenAnalyser.isRightParanthesis())
             errorMessage.append("**Unexpected ')'");
-        else if(tokenAnalyser.isEndOfExpression())
+        else if(tokenAnalyser.isIllegalDollar())
             errorMessage.append("**Unexpected '$'");
         else if(tokenAnalyser.isUnexpectedEOS())
             errorMessage.append("**Unexpected end of expression");
         else
-            errorMessage.append("**Unknown State");
+            errorMessage.append("**Illegal Expression");
+        errorMessage.append(" at location ").append(tokenAnalyser.getLocation());
         errorMessage.append("**");
     }
+    
+    public ParseError(String error) {
+        errorMessage = new StringBuilder();
+        errorMessage.append(error);
+    }
+    
     @Override
     public String getMessage() {
         return errorMessage.toString();
@@ -146,7 +157,7 @@ class TokenAnalyser {
         inputBuffer = input;
         pointer = 0;
         symbolPattern = Pattern.compile("[A-Za-z]\\w*");
-        intPattern = Pattern.compile("([-+]?\\d+)([\\s\\.\\)])");
+        intPattern = Pattern.compile("([-+]?\\d+)([\\s+\\.\\)])");
         symbolMatcher = symbolPattern.matcher(inputBuffer);
         intMatcher = intPattern.matcher(inputBuffer);
     }
@@ -175,8 +186,16 @@ class TokenAnalyser {
     StringBuilder getTokenError() {
         StringBuilder tokenerr = new StringBuilder().append(
                 inputBuffer.charAt(pointer));
-        tokenerr.append(" at location ").append(pointer);
+        
         return tokenerr;
+    }
+
+    int getLocation() {
+        return pointer + 1;
+    }
+
+    boolean isIllegalDollar() {
+        return checkNextToken() == TokenType.DOLLAR && !isEndOfExpression();
     }
     
     enum TokenType {
@@ -188,7 +207,7 @@ class TokenAnalyser {
         INTEGER,
         END,         //End of Expression
         ERROR,       //Unacceptable character or unexpected end of stream
-        EOS,         //End of Stream
+        DOLLAR,        
         ERROR_EOS    //Unexpected end of stream error
     }
 
@@ -199,17 +218,14 @@ class TokenAnalyser {
             case '(': return TokenType.L_BRAC;
             case ')': return TokenType.R_BRAC;
             case '.': return TokenType.DOT;
-            case '$': return endTokenType();
+            case '$': return TokenType.DOLLAR;
             case ' ': case '\n': case '\t': case '\r': return TokenType.WHITESPACE;
             default : return atomType(inputBuffer.charAt(pointer));
         }
     }
     
     public boolean isEndOfExpression() {
-        return checkNextToken() == TokenType.END;
-    }
-    public boolean isEndOfStream() {
-        return checkNextToken() == TokenType.EOS;
+        return pointer == inputBuffer.length() - 1;
     }
     
     public boolean isErrorStream() {
@@ -230,12 +246,7 @@ class TokenAnalyser {
     public boolean isSymbolicAtom() {
         return checkNextToken() == TokenType.IDENTIFIER;
     }
-    public TokenType endTokenType() {
-        if(pointer < inputBuffer.length()-1 &&
-                inputBuffer.charAt(pointer+1) == '$')
-            return TokenType.EOS;
-        else return TokenType.END;
-    }
+
     public TokenType atomType(char ch) {
         if(Character.isDigit(ch) || ch=='+' || ch == '-')
             return TokenType.INTEGER;
