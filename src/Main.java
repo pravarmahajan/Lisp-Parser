@@ -1,5 +1,6 @@
 /**
  * Link to symbol table
+ * Empty list
  * @author pravar
  */
 public class Main {
@@ -10,11 +11,12 @@ public class Main {
         while(true){
             Parser parser = new Parser();
             inputExpressions = io.inputExpression();
+            
             if(io.getExitSignal()) {
                 System.out.println("Bye!");
                 break;
             }
-            //inputExpressions = "(2 . ((3 . 4) . ((5 . 6) . NIL)))$";
+            
             try {
                 SExp parsedExpression =
                         parser.getParsedSExpressions(inputExpressions);

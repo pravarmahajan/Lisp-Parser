@@ -40,8 +40,10 @@ public class Parser {
             tokenAnalyser.skipToken();
             tokenAnalyser.skipWhitespaces();
             //<s-exp> ::= ()
-            if(tokenAnalyser.isRightParanthesis())
+            if(tokenAnalyser.isRightParanthesis()) {
+                tokenAnalyser.skipToken();
                 return new SExp("NIL");
+            }
             SExp left = parseNextSExpression(tokenAnalyser);
             tokenAnalyser.skipWhitespaces();
             if(tokenAnalyser.isDot()) {
