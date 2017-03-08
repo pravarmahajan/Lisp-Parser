@@ -1,0 +1,52 @@
+The Design Documentation for Lisp Parser
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The code consists of the following five java class files:
+(1) Main.java
+(2) IOHandler.java
+(3) Parser.java
+(4) SExp.java
+(5) SymbolTable.java
+
+Main.java: This class defines the main function. It creates the IOHandler and
+    SymbolTable objects, calls IOHandler functions responsible input and output
+    of s-expressions and does so repeatedly till exitSignal is received.
+
+IOHandler.java: This contains class the IOHandler class which defines methods
+    to input the s-expression from the console and output the in memory s-object
+    to the terminal. It does not syntactic analysis, it simply cleans the
+    leading and trailing whitespace characters. It sends an exitSingal to the
+    main function once it encounters '$$' which when caught by main, terminates
+    the application.
+
+Parser.java: This contains the classes responsible for parsing the s-expression
+    and catching syntax errors if, any. The class TokenAnalyser reads the next
+    token from the input stream and provides a TokenType tag for the token
+    (int atom, symbolic atom, left bracket, right bracket, dots etc).
+
+    The Parser class uses TokenAnalyser object to get tokens one at a time from
+    the input stream. Depending on the token type, it selects the correct
+    grammar production rule and applies to the rest of the expression. The
+    grammar rules have been mentioned in the comments. The class uses a
+    recursive decent method to parse the s-expression. The parsed expression
+    is loaded into memory as SExp objects (described later).
+
+    The exceptions arising from syntactically incorrect expressions is caught
+    by the ParserError class. Depending on the current state of tokenAnalyser,
+    it tries to make the best guess for the type of error and prints the message
+    accordingly.
+
+SExp.java: This java file creates class for an s-expression object. It has left
+    and right pointers to self indicating the left and right child of an in
+    memory s-expression tree. The field value is used only if it is an integer
+    atom and the field name is used only if it is a symbolic atom. It contains
+    an enumeration SExpType which describes the type of SExpression (integer
+    atom, smbolic atom, and non-atomic s-expression. It also provides a method
+    to print the s-expression recursively.
+
+SymbolTable.java: This creates an in memory table mapping symbolic atoms to
+    their corresponding s-expression objects. The table is implemented in the
+    form of a hashmap, with symbol being keys and SExp objects being the
+    corresponding values. The function getSExpForAtom automatically adds
+    retrieves the SExp for a symbol if an SExp has been created for it before,
+    otherwise creates a new SExp object and adds it to  the symbol table.
