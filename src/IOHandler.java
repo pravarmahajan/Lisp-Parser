@@ -35,6 +35,7 @@ public class IOHandler {
         StringBuilder inputString = new StringBuilder();
         Scanner inputReader = new Scanner(System.in);
         String line = "";
+        System.out.print("? ");
         while(!line.equals("$")){
             line = inputReader.nextLine();
             inputString.append(line).append('\n');
