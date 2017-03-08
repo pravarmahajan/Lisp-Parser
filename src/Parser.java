@@ -17,16 +17,20 @@ import java.util.regex.*;
  * The rules of grammar for parsing the s-expression are as defined above.
  */
 public class Parser {
-    public SExp getParsedSExpressions(String inputStream) throws ParseError {
+ 
+    public SExp getParsedSExpressions(String inputStream,
+            SymbolTable symbolTable) throws ParseError {
         TokenAnalyser tokenAnalyser = new TokenAnalyser(inputStream);
-        SExp terminalExpression = parseNextSExpression(tokenAnalyser);
+        SExp terminalExpression = parseNextSExpression(tokenAnalyser,
+                symbolTable);
         tokenAnalyser.skipWhitespaces();
         if(!tokenAnalyser.isEndOfExpression())
             throw new ParseError(tokenAnalyser);
         return terminalExpression;
     }
     
-    private SExp parseNextSExpression(TokenAnalyser tokenAnalyser) 
+    private SExp parseNextSExpression(TokenAnalyser tokenAnalyser,
+            SymbolTable symbolTable) 
             throws ParseError {
         //<s-exp> ::= <atom>
         tokenAnalyser.skipWhitespaces();
@@ -34,7 +38,7 @@ public class Parser {
             return parseIntAtom(tokenAnalyser);
         }
         else if(tokenAnalyser.isSymbolicAtom()) {
-            return parseSymbolicAtom(tokenAnalyser);
+            return parseSymbolicAtom(tokenAnalyser, symbolTable);
         }
         else if(tokenAnalyser.isLeftParanthesis()) {
             tokenAnalyser.skipToken();
@@ -44,13 +48,13 @@ public class Parser {
                 tokenAnalyser.skipToken();
                 return new SExp("NIL");
             }
-            SExp left = parseNextSExpression(tokenAnalyser);
+            SExp left = parseNextSExpression(tokenAnalyser, symbolTable);
             tokenAnalyser.skipWhitespaces();
             if(tokenAnalyser.isDot()) {
                 //<s-exp> ::= (<s-exp> . <s-exp>)
                 tokenAnalyser.skipToken(); //Skipping the dot
                 tokenAnalyser.skipWhitespaces();
-                SExp right = parseNextSExpression(tokenAnalyser);
+                SExp right = parseNextSExpression(tokenAnalyser, symbolTable);
                 tokenAnalyser.skipWhitespaces();
                 if(tokenAnalyser.isRightParanthesis()) {
                     tokenAnalyser.skipToken();
@@ -62,7 +66,7 @@ public class Parser {
             }
             else{
                 //<sexp> ::= (<sexp <rest>
-                SExp rest = parseRest(tokenAnalyser);
+                SExp rest = parseRest(tokenAnalyser, symbolTable);
                 return new SExp(left, rest);
             }
         }
@@ -75,7 +79,8 @@ public class Parser {
         return tokenAnalyser.getInteger();
     }
 
-    private SExp parseRest(TokenAnalyser tokenAnalyser) throws ParseError {
+    private SExp parseRest(TokenAnalyser tokenAnalyser,
+            SymbolTable symbolTable) throws ParseError {
         //<sexp> ::= )
         tokenAnalyser.skipWhitespaces();
         if(tokenAnalyser.isRightParanthesis()) {
@@ -84,13 +89,14 @@ public class Parser {
         }
         //<sexp> ::= <space><sexp><rest>        
         tokenAnalyser.skipWhitespaces();
-        SExp left = parseNextSExpression(tokenAnalyser);
-        SExp right = parseRest(tokenAnalyser);
+        SExp left = parseNextSExpression(tokenAnalyser, symbolTable);
+        SExp right = parseRest(tokenAnalyser, symbolTable);
         return new SExp(left, right);
     }
 
-    private SExp parseSymbolicAtom(TokenAnalyser tokenAnalyser) {
-        return tokenAnalyser.getIdentifier();
+    private SExp parseSymbolicAtom(TokenAnalyser tokenAnalyser,
+            SymbolTable symbolTable) {
+        return tokenAnalyser.getIdentifier(symbolTable);
     }
 }
 
@@ -258,11 +264,11 @@ class TokenAnalyser {
             return TokenType.ERROR;
     }
     
-    public SExp getIdentifier() {
+    public SExp getIdentifier(SymbolTable symbolTable) {
         symbolMatcher.find(pointer);
         String identifier = symbolMatcher.group();
         pointer = symbolMatcher.end();
-        return new SExp(identifier);
+        return symbolTable.getSExpForAtom(identifier);
     }
     
     public SExp getInteger() throws ParseError { 
