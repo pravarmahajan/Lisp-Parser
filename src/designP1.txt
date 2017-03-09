@@ -14,7 +14,7 @@ Main.java: This class defines the main function. It creates the IOHandler and
 
 IOHandler.java: This contains class the IOHandler class which defines methods
     to input the s-expression from the console and output the in memory s-object
-    to the terminal. It does not syntactic analysis, it simply cleans the
+    to the terminal. It does not do syntactic analysis, it simply cleans the
     leading and trailing whitespace characters. It sends an exitSingal to the
     main function once it encounters '$$' which when caught by main, terminates
     the application.
