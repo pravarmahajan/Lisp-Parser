@@ -65,4 +65,19 @@ public class SExp {
         left = leftExpr;
         right = rightExpr;
     }
+
+    public SExp evaluate(AList alist, DList dlist) {
+        if isNil() {
+            return this;
+        }
+    }
+    
+    public SExp evalList(SExp list, AList alist, DList dlist) {
+        if(list.isNil()) {
+            return new SExp("NIL");
+        }
+        else {
+            
+        }
+    }
 }

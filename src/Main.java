@@ -23,7 +23,9 @@ public class Main {
                 SExp parsedExpression =
                         parser.getParsedSExpressions(inputExpressions,
                                 symbolTable);
-                io.printSExpression(parsedExpression);
+                io.printSExpression(parsedExpression); //Output the sexp tree
+                parsedExpression.eval(new Alist(), new Dlist());
+
             }
             catch(ParseError e) {
                 System.err.println(e.getMessage());
