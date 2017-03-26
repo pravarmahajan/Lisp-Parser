@@ -12,35 +12,18 @@
  */
 
 public class SExp {
+
+    private final SExpType type; //One of the enum SExpType
+    private final int value; //Only if type is INT_ATOM
+    private final String name; //Only if type is SYM_ATOM
+    private final SExp left;
+    private SExp right; //If type is NON_ATOM
+
     public enum SExpType {
         INT_ATOM, SYM_ATOM, NON_ATOM
     }
     
-    private SExpType type; //One of the enum SExpType
-    private int value; //Only if type is INT_ATOM
-    private String name; //Only if type is SYM_ATOM
-    private SExp left, right; //If type is NON_ATOM
-    
-    String getDottedNotation() {
-        StringBuilder dottedNotation = new StringBuilder();
-        switch (type) {
-        case INT_ATOM:
-            dottedNotation.append(value);
-            break;
-        case SYM_ATOM:
-            dottedNotation.append(name);
-            break;
-        default:
-            dottedNotation.append("(");
-            dottedNotation.append(left.getDottedNotation());
-            dottedNotation.append(" . ");
-            dottedNotation.append(right.getDottedNotation());
-            dottedNotation.append(")");
-            break;
-        }
-        
-        return dottedNotation.toString();
-    }
+    //Public constructors
     
     public SExp(int number) {
         type = SExpType.INT_ATOM;
@@ -65,19 +48,87 @@ public class SExp {
         left = leftExpr;
         right = rightExpr;
     }
-
-    public SExp evaluate(AList alist, DList dlist) {
-        if isNil() {
-            return this;
-        }
+    
+    String getAtomAsString() {
+        assert type == SExpType.SYM_ATOM;
+        return name; 
     }
     
-    public SExp evalList(SExp list, AList alist, DList dlist) {
-        if(list.isNil()) {
-            return new SExp("NIL");
+    //Evaluation functions start here
+    
+    public boolean isNil() {
+        return this == SymbolTable.getSExpForAtom("T");
+    }
+    
+    SExp cons(SExp rest) {
+        return new SExp(this, rest);
+    }
+
+    void setRight(SExp right) {
+        this.right = right;
+    }
+    boolean isAtom() {
+        return isIntegerAtom() || isSymbolicAtom();
+    }
+
+    boolean isIntegerAtom() {
+        return type == SExpType.INT_ATOM;
+    }
+    
+    boolean isSymbolicAtom() {
+        return type == SExpType.SYM_ATOM;
+    }
+
+    boolean isTrue() {
+        return this == SymbolTable.getSExpForAtom("T");
+    }
+    
+    public SExp car() {
+        return left;
+    }
+    
+    public SExp cdr() {
+        return right;
+    }
+    
+    public boolean equalsSymbol(String val) {
+        return type == SExpType.SYM_ATOM && name.equals(val);
+    }
+    
+    public boolean equalsSymbol(int val) {
+        return type == SExpType.INT_ATOM && value == val;
+    }
+    
+    public SExp equals(SExp other) {
+        return boolToSExp(type == other.type && value == other.value &&
+                name.equals(other.name));
+    }
+    
+    public static SExp boolToSExp(boolean flag) {
+        if(flag)
+            return SymbolTable.getSExpForAtom("T");
+        else
+            return SymbolTable.getSExpForAtom("NIL");
+    }
+    //Convert S-Exp to a string recursively
+    String getDottedNotation() {
+        StringBuilder dottedNotation = new StringBuilder();
+        switch (type) {
+        case INT_ATOM:
+            dottedNotation.append(value);
+            break;
+        case SYM_ATOM:
+            dottedNotation.append(name);
+            break;
+        default:
+            dottedNotation.append("(");
+            dottedNotation.append(left.getDottedNotation());
+            dottedNotation.append(" . ");
+            dottedNotation.append(right.getDottedNotation());
+            dottedNotation.append(")");
+            break;
         }
-        else {
-            
-        }
+        
+        return dottedNotation.toString();
     }
 }

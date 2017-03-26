@@ -12,16 +12,15 @@
 import java.util.*;
 
 public class SymbolTable {
-    Map<String, SExp> symbolTableMap;
+    
+    private static Map<String, SExp> symbolTableMap = null;
     
     
     /**Constructor for the symbol table.
      * It initializes the symbol table as a hashmap, mapping symbol strings
      * to corresponding SExp object.
      */
-    public SymbolTable() {
-        symbolTableMap = new HashMap<>();
-    }
+    private SymbolTable() {}
     
     /** Overloaded function getSExpressionForAtom.
      * Creates and returns new SExp object for an atom, if it is an integer or
@@ -30,11 +29,20 @@ public class SymbolTable {
      * @param atom: int or String, representing the atom
      * @return SExp: SExpression object corresponding to the atom 
      */
-    public SExp getSExpForAtom(int atom) {
+    public static SExp getSExpForAtom(int atom) {
         return new SExp(atom);
     }
     
-    public SExp getSExpForAtom(String atom) {
+    /**
+     *
+     * @param atom
+     * @return
+     */
+    public static SExp getSExpForAtom(String atom) {
+        
+        if(symbolTableMap == null)
+            symbolTableMap = new HashMap<>();
+        
         if(symbolTableMap.containsKey(atom))
             return symbolTableMap.get(atom);
         

@@ -9,7 +9,6 @@ public class Main {
         System.out.println("**LISP PARSER** v1.0");
         IOHandler io = new IOHandler();
         String inputExpressions;
-        SymbolTable symbolTable = new SymbolTable();
         while(true){
             Parser parser = new Parser();
             inputExpressions = io.inputExpression();
@@ -21,14 +20,16 @@ public class Main {
             
             try {
                 SExp parsedExpression =
-                        parser.getParsedSExpressions(inputExpressions,
-                                symbolTable);
+                        parser.getParsedSExpressions(inputExpressions);
                 io.printSExpression(parsedExpression); //Output the sexp tree
-                parsedExpression.eval(new Alist(), new Dlist());
+                Evaluator.eval(parsedExpression);
 
             }
-            catch(ParseError e) {
-                System.err.println(e.getMessage());
+            catch(ParseError err) {
+                System.err.println(err.getMessage());
+            }
+            catch(EvaluationError err) {
+                System.err.println(err.getMessage());
             }
         }
     }

@@ -10,25 +10,46 @@
  * the left and right child of the parent s-expression
  */
 
-public class DList extends SExp {
-    public DList() {
-        SExp(new SExp("NIL"), new SExp("NIL"));
-    }
-
-    public void addFunction(String funcName, SExp paramList, SExp body) {
-        addFuncHelper(funcName, paramList, body, left);
-    }
-
-    private void addFuncHelper(String funcName, SExp paramList,
-                                SExp body, SExp head) {
-        if(head.isNil()) {
-            SExp left = new SExp(funcName);
+public class DList{
+    
+    private static SExp dList = SymbolTable.getSExpForAtom("NIL");
+    private DList(){}
+   
+    public static void addFunction(String funcName, SExp paramList, SExp body) {
+        
+        if(dList.isNil()) {
+            SExp left = SymbolTable.getSExpForAtom(funcName);
             SExp right = new SExp(paramList, body);
-            head = new SExp(left, right);
+            dList = new SExp(new SExp(left, right), dList);
+        }
+        else addFuncHelper(funcName, paramList, body, dList);
+    }
+
+    private static void addFuncHelper(String funcName, SExp paramList,
+                                SExp body, SExp node) {
+        if(!node.cdr().isNil()) {
+            addFuncHelper(funcName, paramList, body, dList.cdr());
         }
         else {
-            addFuncHelper(funcName, paramList, body, right);
+            SExp left = SymbolTable.getSExpForAtom(funcName);
+            SExp right = new SExp(paramList, body);
+            node.setRight(new SExp(new SExp(left, right), node.cdr()));
         }
+    }
+
+    static SExp getFuncParams(SExp funcName) throws EvaluationError {
+        return findFuncDefRecursively(funcName, dList).car();
+    }
+    
+    private static SExp findFuncDefRecursively(SExp funcName, SExp node)
+            throws EvaluationError {
+        if(node.isNil())
+            throw new EvaluationError("Function definition not found!");
+        else return findFuncDefRecursively(funcName, node.cdr());
+    }
+    
+    static SExp getFuncBody(SExp funcName) throws EvaluationError {
+        return findFuncDefRecursively(funcName, dList).cdr();
     }
 
 }

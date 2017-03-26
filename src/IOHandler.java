@@ -37,7 +37,8 @@ public class IOHandler {
         String line = "";
         System.out.print("? ");
         while(!line.equals("$")){
-            line = inputReader.nextLine();
+            if(inputReader.hasNextLine())
+                line = inputReader.nextLine();
             inputString.append(line).append('\n');
             if(line.equals("$$")) {
                 exitSignal = true;
