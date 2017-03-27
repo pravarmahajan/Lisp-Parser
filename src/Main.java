@@ -6,23 +6,20 @@
  */
 public class Main {
     public static void main(String[] args){
-        System.out.println("**LISP PARSER** v1.0");
+        System.out.println("**LISP INTERPRETER** v1.1");
         IOHandler io = new IOHandler();
         String inputExpressions;
         while(true){
             Parser parser = new Parser();
             inputExpressions = io.inputExpression();
-            
-            if(io.getExitSignal()) {
-                System.out.println("Bye!");
-                break;
-            }
-            
+
             try {
                 SExp parsedExpression =
                         parser.getParsedSExpressions(inputExpressions);
+               
+                io.printSExpression(Evaluator.eval(parsedExpression));
+                System.out.println("dot notation:");
                 io.printSExpression(parsedExpression); //Output the sexp tree
-                Evaluator.eval(parsedExpression);
 
             }
             catch(ParseError err) {
@@ -30,6 +27,11 @@ public class Main {
             }
             catch(EvaluationError err) {
                 System.err.println(err.getMessage());
+            }
+            
+            if(io.getExitSignal()) {
+                System.out.println("Bye!");
+                break;
             }
         }
     }

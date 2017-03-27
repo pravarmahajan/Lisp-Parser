@@ -27,7 +27,10 @@ public class DList{
 
     private static void addFuncHelper(String funcName, SExp paramList,
                                 SExp body, SExp node) {
-        if(!node.cdr().isNil()) {
+        if(node.car().car().getAtomAsString().equals(funcName)) {
+            node.car().setRight(new SExp(paramList, body));
+        }
+        else if(!node.cdr().isNil()) {
             addFuncHelper(funcName, paramList, body, dList.cdr());
         }
         else {
@@ -44,7 +47,10 @@ public class DList{
     private static SExp findFuncDefRecursively(SExp funcName, SExp node)
             throws EvaluationError {
         if(node.isNil())
-            throw new EvaluationError("Function definition not found!");
+            throw new EvaluationError("Undefined function "
+                    + funcName.getAtomAsString());
+        else if(node.car().car().equalsSymbol(funcName.getAtomAsString()))
+            return node.car().cdr();
         else return findFuncDefRecursively(funcName, node.cdr());
     }
     

@@ -36,20 +36,18 @@ public class IOHandler {
         Scanner inputReader = new Scanner(System.in);
         String line = "";
         System.out.print("? ");
-        while(!line.equals("$")){
+        while(true) {
             if(inputReader.hasNextLine())
                 line = inputReader.nextLine();
-            inputString.append(line).append('\n');
-            if(line.equals("$$")) {
+            if(line.equals("$"))
+                break;
+            else if(line.equals("$$")) {
                 exitSignal = true;
                 break;
             }
-            else if(inputString.toString().equals("$\n")) {
-                //Empty expression
-                inputString = new StringBuilder();
-                line = "";
-            }
-        } 
+            inputString.append(line).append('\n');
+        }
+        inputString.append("$\n");
         return inputString.toString().trim();
     }
 }

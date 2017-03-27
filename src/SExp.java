@@ -57,7 +57,7 @@ public class SExp {
     //Evaluation functions start here
     
     public boolean isNil() {
-        return this == SymbolTable.getSExpForAtom("T");
+        return this == SymbolTable.getSExpForAtom("NIL");
     }
     
     SExp cons(SExp rest) {
@@ -100,8 +100,14 @@ public class SExp {
     }
     
     public SExp equals(SExp other) {
-        return boolToSExp(type == other.type && value == other.value &&
-                name.equals(other.name));
+        if(type != other.type)
+            return boolToSExp(false);
+        else if(type == SExpType.INT_ATOM)
+            return boolToSExp(value == other.value);
+        else if(type == SExpType.SYM_ATOM)
+            return boolToSExp(name.equals(other.name));
+        else
+            return boolToSExp(false);
     }
     
     public static SExp boolToSExp(boolean flag) {
@@ -110,6 +116,35 @@ public class SExp {
         else
             return SymbolTable.getSExpForAtom("NIL");
     }
+    
+    static SExp plus(SExp op1, SExp op2) {
+        return new SExp(op1.value+op2.value);
+    }
+
+    static SExp times(SExp op1, SExp op2) {
+        return new SExp(op1.value*op2.value);
+    }
+
+    static SExp minus(SExp op1, SExp op2) {
+        return new SExp(op1.value-op2.value);
+    }
+
+    static SExp quotient(SExp op1, SExp op2) {
+        return new SExp(op1.value/op2.value);
+    }
+
+    static SExp remainder(SExp op1, SExp op2) {
+        return new SExp(op1.value%op2.value);
+    }
+
+    static SExp less(SExp op1, SExp op2) {
+        return boolToSExp(op1.value < op2.value);
+    }
+
+    static SExp greater(SExp op1, SExp op2) {
+        return boolToSExp(op1.value > op2.value);
+    }
+    
     //Convert S-Exp to a string recursively
     String getDottedNotation() {
         StringBuilder dottedNotation = new StringBuilder();

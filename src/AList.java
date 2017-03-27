@@ -43,29 +43,48 @@ class AList{
     }
     
     @SuppressWarnings("empty-statement")
-    static void addPairs(SExp params, SExp args) {
-        if(aList.isNil())
-            aList = new SExp(new SExp(params, args), aList);
+    static void addPairs(SExp params, SExp args) throws EvaluationError {
         SExp node;
+        if(aList.isNil()) {
+            aList = new SExp(new SExp(params.car(), args.car()), aList);
+            params = params.cdr();
+            args = args.cdr();
+        }
         for(node = aList; !node.cdr().isNil(); node=node.cdr());
-        node.setRight(new SExp(new SExp(params, args), node));
+        addPairsRecursively(node, params, args);
+    }
+    
+    private static void addPairsRecursively(SExp node, SExp params, SExp args)
+            throws EvaluationError {
+        assert node.cdr().isNil();
+        if(params.isNil() && args.isNil())
+            return;
+        else if(params.isNil())
+            throw new EvaluationError("Too many arguments!");
+        else if(args.isNil())
+            throw new EvaluationError("Too few arguments!");
+        node.setRight(new SExp(new SExp(params.car(), args.car()), node.cdr()));
+        addPairsRecursively(node.cdr(), params.cdr(), args.cdr());
     }
     
     @SuppressWarnings("empty-statement")
     static void destroy(SExp params) {
-        assert !aList.isNil();
-        boolean flag = destroyRecursively(aList, null, params);
-        assert flag;
+        assert !aList.isNil() && !params.isNil();
+        while(!params.isNil()) {
+            boolean flag = destroyRecursively(aList, null, params.car());
+            assert flag;
+            params = params.cdr();
+        }
     }
     
-    private static boolean destroyRecursively(SExp node, SExp parent, SExp params) {
+    private static boolean destroyRecursively(SExp node, SExp parent, SExp param) {
         if(node.isNil()) return false;
-        boolean flag = destroyRecursively(node.cdr(), node, params);
+        boolean flag = destroyRecursively(node.cdr(), node, param);
         if(flag) return flag;
-        else if(node.car().getAtomAsString().equals(params.getAtomAsString()))
+        else if(node.car().car().getAtomAsString().equals(param.getAtomAsString()))
         {
             if(parent == null)
-                aList = node;
+                aList = node.cdr();
             else
                 parent.setRight(node.cdr());
             return true;
