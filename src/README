@@ -1,0 +1,21 @@
+(1) To run the interpreter, type:
+make
+
+This will compile all the java files, create class files
+and run the Main class.
+
+
+Once you see '?' the parser is ready to accept input
+
+(2) To clean all the class files, type:
+make clean
+
+The program works fine as long as you provide type in input line by line.
+On using redirections or piping to provide input from file, it fails.
+Haven't been able to figure out why
+
+I am assuming $ and $$ are going to be in new line and the line does
+not contain anything other leading or trailing chars.
+Otherwise it's a parsing error
+
+Empty $ or $$ results in error too.
