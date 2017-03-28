@@ -1,13 +1,9 @@
 /**
- * This class defines interface to the declaration list,
- * that is, the list that contains all the functions and
- * corresponding definitions.
- * It is convenient to define the D-List as an S-Expression
- * therefore our class inherits from the SExp class and
- * adds a couple of methods specific to D-List alone.
- * The declaration list is a list of elements of the form
- * (funcName.(paramsList.body)) where the dot separates 
- * the left and right child of the parent s-expression
+ * This class defines the declaration list.
+ * That is, it contains all the functions which have been defined using DEFUN,
+ * along with params and function body. The D-List has been implemented as 
+ * an s-expression and all the operations - addition, modification and searching
+ * are done recursively on the s-expression.
  */
 
 public class DList{

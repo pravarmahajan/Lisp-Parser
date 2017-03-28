@@ -50,8 +50,11 @@ public class SExp {
     }
     
     String getAtomAsString() {
-        assert type == SExpType.SYM_ATOM;
-        return name; 
+        assert(type != SExpType.NON_ATOM);
+        if(type == SExpType.SYM_ATOM)
+            return name; 
+        else
+            return Integer.toString(value);
     }
     
     //Evaluation functions start here

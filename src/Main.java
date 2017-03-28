@@ -1,8 +1,9 @@
 /**
- * This is the main class of the lisp parser
+ * This is the main class of the lisp interpreter.
  * Takes input lisp expression from user, 
  * creates the s-expression tree internally
- * and prints s-expression in the dot notation
+ * and prints s-expression in the dot notation.
+ * Then it evaluates the parsed s-expression and displays the output.
  */
 public class Main {
     public static void main(String[] args){
@@ -16,10 +17,11 @@ public class Main {
             try {
                 SExp parsedExpression =
                         parser.getParsedSExpressions(inputExpressions);
-               
-                io.printSExpression(Evaluator.eval(parsedExpression));
                 System.out.println("dot notation:");
                 io.printSExpression(parsedExpression); //Output the sexp tree
+                SExp outputExpression = Evaluator.eval(parsedExpression);
+                System.out.println("evaluation output:");
+                io.printSExpression(outputExpression);
 
             }
             catch(ParseError err) {

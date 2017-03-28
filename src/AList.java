@@ -1,13 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/** Class Alist.
+ * This class forms the association list, ie, the mapping of symbols to corresponding
+ * values when passed in the form of an argument. The variables/values pairs
+ * reside only through the lifetime of the function and vanish once the function
+ * disappears, being in spirit with LISP's functional programming paradigm. 
+ * The variables/values pairs are stored as s-expression, in the following way:
+ * ((var_one.val_one) (var_two.val_two) ..... (var_n.val_n))
+ * Since the list itself has been implemented as an s-expression list, it's 
+ * convenient to do search, deleting, adding etc recursively. Hence for every
+ * operation n the A-list, a corresponding recursive helper function has been
+ * provided, which is private in scope.
  */
 
-/**
- *
- * @author pravar
- */
 class AList{
     private static SExp aList = SymbolTable.getSExpForAtom("NIL");
     
