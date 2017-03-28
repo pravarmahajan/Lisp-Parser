@@ -5,6 +5,7 @@ import java.util.Scanner;
  * The entire input is read into a string and returned to the caller.
  * When provided with a tree like SExp object, the output routine
  * prints in memory ojbect in the full dot notation.
+ * @author: Pravar Mahajan
  */
 public class IOHandler {
     

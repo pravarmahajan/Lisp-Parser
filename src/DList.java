@@ -4,6 +4,7 @@
  * along with params and function body. The D-List has been implemented as 
  * an s-expression and all the operations - addition, modification and searching
  * are done recursively on the s-expression.
+ * @author: Pravar Mahajan
  */
 
 public class DList{

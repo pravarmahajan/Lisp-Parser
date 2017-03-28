@@ -4,6 +4,7 @@
  * as input.
  * A separate class EvaluationError handles and generates exceptions related to
  * evaluation.
+ * @author: Pravar Mahajan
  */
 
 /** Class: Evaluator.

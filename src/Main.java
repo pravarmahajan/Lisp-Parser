@@ -4,6 +4,7 @@
  * creates the s-expression tree internally
  * and prints s-expression in the dot notation.
  * Then it evaluates the parsed s-expression and displays the output.
+ * @author: Pravar Mahajan
  */
 public class Main {
     public static void main(String[] args){

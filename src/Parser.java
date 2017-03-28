@@ -1,4 +1,5 @@
 /**
+ * @author: Pravar Mahajan
  * Defines methods to read a lisp code and convert it to corresponding SExp obj.
  * Uses recursive descent method to parse the S-Expression
  * Error handling is done and appropriate error messages are returned in case

@@ -9,6 +9,7 @@
  * convenient to do search, deleting, adding etc recursively. Hence for every
  * operation n the A-list, a corresponding recursive helper function has been
  * provided, which is private in scope.
+ * @author: Pravar Mahajan
  */
 
 class AList{

@@ -8,7 +8,7 @@
  * the variable name. If it's a non atomic S-Expression, then left and right
  * variables point to the left and the right children nodes respectively,
  * otherwise they are null.
- * 
+ * @author: Pravar Mahajan
  */
 
 public class SExp {
