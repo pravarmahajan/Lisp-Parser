@@ -24,7 +24,7 @@ public class Evaluator {
     private static SExp applyFun(SExp func, SExp args) throws EvaluationError {
         assert func.isSymbolicAtom();
         if(func.equalsSymbol("CAR")) {
-            checkValidNumArgs(func, args, 2);
+            checkValidNumArgs(func, args, 1);
             if(args.car().isAtom())
                 throw new EvaluationError(args.car().getAtomAsString()
                         + " is an atom");

@@ -12,10 +12,18 @@ public class Main {
         IOHandler io = new IOHandler();
         String inputExpressions;
         while(true){
+
+            if(io.getExitSignal()) {
+                System.out.println("Bye!");
+                break;
+            }
+
             Parser parser = new Parser();
             inputExpressions = io.inputExpression();
 
             try {
+                if(inputExpressions.equals("$") || inputExpressions.equals("$$"))
+                    continue;
                 SExp parsedExpression =
                         parser.getParsedSExpressions(inputExpressions);
                 System.out.println("dot notation:");
@@ -32,10 +40,6 @@ public class Main {
                 System.err.println(err.getMessage());
             }
             
-            if(io.getExitSignal()) {
-                System.out.println("Bye!");
-                break;
-            }
         }
     }
 }
